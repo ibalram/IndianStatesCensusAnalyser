@@ -3,9 +3,10 @@ package com.cg.censusanalyser;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
-public class AppTest {
+public class StateCensusDataTest {
 	public static final String STATE_CENSUS_FILE = "./IndiaStateCensusData.csv";
 	public static final String STATE_CENSUS_INCORECT_DELIMITER_FILE = "./WrongStateCensusData.csv";
+	public static final String STATE_CENSUS_INCORECT_HEADER_FILE = "./WrongStateCensusData.csv";
 	public static final String STATE_CENSUS_INCORRECT_CSV_FILE = "./IncorrectCsvFile.txt";
 
 	private StateCensusAnalyser censusAnalyser;
@@ -34,11 +35,20 @@ public class AppTest {
 			assertEquals(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV, e.type);
 		}
 	}
+	
+	@Test
+	public void givenStateCensusIncorectDelimiterDelimiterShouldThrowException() {
+		try {
+			censusAnalyser.loadStateCsvData(STATE_CENSUS_INCORECT_DELIMITER_FILE);
+		} catch (StateCensusAnalyserException e) {
+			assertEquals(StateCensusAnalyserException.ExceptionType.RUNTIME_EXCEPTION, e.type);
+		}
+	}
 
 	@Test
 	public void givenStateCensusIncorectDelimiterHeaderShouldThrowException() {
 		try {
-			censusAnalyser.loadStateCsvData(STATE_CENSUS_INCORECT_DELIMITER_FILE);
+			censusAnalyser.loadStateCsvData(STATE_CENSUS_INCORECT_HEADER_FILE);
 		} catch (StateCensusAnalyserException e) {
 			assertEquals(StateCensusAnalyserException.ExceptionType.RUNTIME_EXCEPTION, e.type);
 		}
