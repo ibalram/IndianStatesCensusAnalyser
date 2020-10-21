@@ -37,7 +37,7 @@ public class StateCensusDataTest {
 	}
 	
 	@Test
-	public void givenStateCensusIncorectDelimiterDelimiterShouldThrowException() {
+	public void givenStateCensusIncorectDelimiterShouldThrowException() {
 		try {
 			censusAnalyser.loadStateCsvData(STATE_CENSUS_INCORECT_DELIMITER_FILE);
 		} catch (StateCensusAnalyserException e) {
