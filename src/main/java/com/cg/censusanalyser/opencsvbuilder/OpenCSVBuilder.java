@@ -1,4 +1,4 @@
-package com.cg.censusanalyser;
+package com.cg.censusanalyser.opencsvbuilder;
 
 import java.io.Reader;
 import java.util.Iterator;
@@ -16,7 +16,7 @@ public class OpenCSVBuilder<E> implements ICSVBuilder {
 			CsvToBean<E> csvToBean = csvToBeanBuilder.build();
 			return csvToBean.iterator();
 		} catch (IllegalStateException e) {
-			throw new CSVBuilderException();
+			throw new CSVBuilderException(e.getMessage());
 		}
 	}
 
@@ -31,7 +31,7 @@ public class OpenCSVBuilder<E> implements ICSVBuilder {
 			csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
 			return csvToBeanBuilder.build();
 		} catch (IllegalStateException e) {
-			throw new CSVBuilderException();
+			throw new CSVBuilderException(e.getMessage());
 		}
 	}
 }

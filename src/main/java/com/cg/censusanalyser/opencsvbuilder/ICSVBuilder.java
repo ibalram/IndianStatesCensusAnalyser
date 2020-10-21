@@ -1,4 +1,4 @@
-package com.cg.censusanalyser;
+package com.cg.censusanalyser.opencsvbuilder;
 
 import java.io.Reader;
 import java.util.Iterator;
