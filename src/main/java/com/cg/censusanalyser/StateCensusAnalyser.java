@@ -85,6 +85,17 @@ public class StateCensusAnalyser {
 		return sortedStateCensusJson;
 	}
 
+	public String getDensityWiseSortedCensusData(String stateCensusFile) throws StateCensusAnalyserException {
+		if (censusList == null || censusList.size() == 0) {
+			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
+					"No Census Data");
+		}
+		Comparator<StateCensus> censusComparator = Comparator.comparing(census -> census.densityPerSqKm);
+		this.sortDesc(censusComparator);
+		String sortedStateCensusJson = new Gson().toJson(censusList);
+		return sortedStateCensusJson;
+	}
+
 	public String getStateCodeWiseSortedCensusData(String stateCensusFile) throws StateCensusAnalyserException {
 		if (stateCodeList == null || stateCodeList.size() == 0) {
 			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
