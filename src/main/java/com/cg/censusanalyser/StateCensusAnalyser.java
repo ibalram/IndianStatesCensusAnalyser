@@ -63,7 +63,7 @@ public class StateCensusAnalyser {
 		return count;
 	}
 
-	public String getStateWiseSortdCensusData(String stateCensusFile) throws StateCensusAnalyserException {
+	public String getStateWiseSortedCensusData(String stateCensusFile) throws StateCensusAnalyserException {
 		if (censusList == null || censusList.size() == 0) {
 			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
 					"No Census Data");
@@ -74,7 +74,18 @@ public class StateCensusAnalyser {
 		return sortedStateCensusJson;
 	}
 
-	public String getStateCodeWiseSortdCensusData(String stateCensusFile) throws StateCensusAnalyserException {
+	public String getPopulationWiseSortedCensusData(String stateCensusFile) throws StateCensusAnalyserException {
+		if (censusList == null || censusList.size() == 0) {
+			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
+					"No Census Data");
+		}
+		Comparator<StateCensus> censusComparator = Comparator.comparing(census -> census.population);
+		this.sortDesc(censusComparator);
+		String sortedStateCensusJson = new Gson().toJson(censusList);
+		return sortedStateCensusJson;
+	}
+
+	public String getStateCodeWiseSortedCensusData(String stateCensusFile) throws StateCensusAnalyserException {
 		if (stateCodeList == null || stateCodeList.size() == 0) {
 			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
 					"No Census Data");
@@ -91,6 +102,19 @@ public class StateCensusAnalyser {
 				StateCensus census1 = censusList.get(j);
 				StateCensus census2 = censusList.get(j + 1);
 				if (censusComparator.compare(census1, census2) > 0) {
+					censusList.set(j, census2);
+					censusList.set(j + 1, census1);
+				}
+			}
+		}
+	}
+
+	private void sortDesc(Comparator<StateCensus> censusComparator) {
+		for (int i = 0; i < censusList.size() - 1; ++i) {
+			for (int j = 0; j < censusList.size() - i - 1; ++j) {
+				StateCensus census1 = censusList.get(j);
+				StateCensus census2 = censusList.get(j + 1);
+				if (censusComparator.compare(census1, census2) < 0) {
 					censusList.set(j, census2);
 					censusList.set(j + 1, census1);
 				}

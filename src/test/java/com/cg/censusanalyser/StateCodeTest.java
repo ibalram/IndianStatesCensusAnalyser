@@ -56,12 +56,12 @@ public class StateCodeTest {
 			assertEquals(StateCensusAnalyserException.ExceptionType.RUNTIME_EXCEPTION, e.type);
 		}
 	}
-	
+
 	@Test
 	public void givenStateCensusDataWhenSortedOnStateCodeShouldReturnSorted() {
 		try {
 			censusAnalyser.loadStateCode(STATE_CODE_FILE);
-			String sortedStateCode = censusAnalyser.getStateCodeWiseSortdCensusData(STATE_CODE_FILE);
+			String sortedStateCode = censusAnalyser.getStateCodeWiseSortedCensusData(STATE_CODE_FILE);
 			StateCode[] stateCodes = new Gson().fromJson(sortedStateCode, StateCode[].class);
 			assertEquals("Andhra Pradesh New", stateCodes[0].stateName);
 		} catch (JsonSyntaxException e) {
