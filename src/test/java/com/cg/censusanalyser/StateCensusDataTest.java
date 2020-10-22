@@ -98,5 +98,19 @@ public class StateCensusDataTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void givenStateCensusDataWhenSortedOnAreaShouldReturnSorted() {
+		try {
+			censusAnalyser.loadStateCsvData(STATE_CENSUS_FILE);
+			String sortedCensusData = censusAnalyser.getAreaWiseSortedCensusData(STATE_CENSUS_FILE);
+			StateCensus[] censusCSV = new Gson().fromJson(sortedCensusData, StateCensus[].class);
+			assertEquals("Rajasthan", censusCSV[0].state);
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+		} catch (StateCensusAnalyserException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
