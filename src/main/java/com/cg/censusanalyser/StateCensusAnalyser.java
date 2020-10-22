@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -11,12 +12,15 @@ import java.util.stream.StreamSupport;
 import com.cg.censusanalyser.opencsvbuilder.CSVBuilderException;
 import com.cg.censusanalyser.opencsvbuilder.CSVBuilderFactory;
 import com.cg.censusanalyser.opencsvbuilder.ICSVBuilder;
+import com.google.gson.Gson;
 
 public class StateCensusAnalyser {
+	List<StateCensus> censusList = null;
+
 	public int loadStateCsvData(String CENSUS_FILE) throws StateCensusAnalyserException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(CENSUS_FILE))) {
 			ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-			List<StateCensus> censusList = csvBuilder.getCSVFileList(reader, StateCensus.class);
+			censusList = csvBuilder.getCSVFileList(reader, StateCensus.class);
 			return censusList.size();
 		} catch (IOException e) {
 			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
@@ -56,5 +60,29 @@ public class StateCensusAnalyser {
 	public <T> int getCount(Iterator<T> iterator) {
 		int count = (int) StreamSupport.stream(((Iterable) iterator).spliterator(), false).count();
 		return count;
+	}
+
+	public String getStateWiseSortdCensusData(String stateCensusFile) throws StateCensusAnalyserException {
+		if (censusList == null || censusList.size() == 0) {
+			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
+					"No Census Data");
+		}
+		Comparator<StateCensus> censusComparator = Comparator.comparing(census -> census.state);
+		this.sort(censusComparator);
+		String sortedStateCensusJson = new Gson().toJson(censusList);
+		return sortedStateCensusJson;
+	}
+
+	private void sort(Comparator<StateCensus> censusComparator) {
+		for (int i = 0; i < censusList.size() - 1; ++i) {
+			for (int j = 0; j < censusList.size() - i - 1; ++j) {
+				StateCensus census1 = censusList.get(j);
+				StateCensus census2 = censusList.get(j + 1);
+				if (censusComparator.compare(census1, census2) > 0) {
+					censusList.set(j, census2);
+					censusList.set(j + 1, census1);
+				}
+			}
+		}
 	}
 }
