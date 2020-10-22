@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 public class StateCensusAnalyser {
 	List<StateCensus> censusList = null;
+	List<StateCode> stateCodeList = null;
 
 	public int loadStateCsvData(String CENSUS_FILE) throws StateCensusAnalyserException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(CENSUS_FILE))) {
@@ -40,8 +41,8 @@ public class StateCensusAnalyser {
 	public int loadStateCode(String STATE_CODE_FILE) throws StateCensusAnalyserException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(STATE_CODE_FILE))) {
 			ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
-			List<StateCode> stateList = csvBuilder.getCSVFileList(reader, StateCode.class);
-			return stateList.size();
+			stateCodeList = csvBuilder.getCSVFileList(reader, StateCode.class);
+			return stateCodeList.size();
 		} catch (IOException e) {
 			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
 					"Incorrect csv file");
@@ -73,6 +74,17 @@ public class StateCensusAnalyser {
 		return sortedStateCensusJson;
 	}
 
+	public String getStateCodeWiseSortdCensusData(String stateCensusFile) throws StateCensusAnalyserException {
+		if (stateCodeList == null || stateCodeList.size() == 0) {
+			throw new StateCensusAnalyserException(StateCensusAnalyserException.ExceptionType.INCORRECT_CSV,
+					"No Census Data");
+		}
+		Comparator<StateCode> stateComparator = Comparator.comparing(census -> census.stateCode);
+		this.sortStateCode(stateComparator);
+		String sortedStateCodeJson = new Gson().toJson(stateCodeList);
+		return sortedStateCodeJson;
+	}
+
 	private void sort(Comparator<StateCensus> censusComparator) {
 		for (int i = 0; i < censusList.size() - 1; ++i) {
 			for (int j = 0; j < censusList.size() - i - 1; ++j) {
@@ -81,6 +93,19 @@ public class StateCensusAnalyser {
 				if (censusComparator.compare(census1, census2) > 0) {
 					censusList.set(j, census2);
 					censusList.set(j + 1, census1);
+				}
+			}
+		}
+	}
+
+	private void sortStateCode(Comparator<StateCode> stateComparator) {
+		for (int i = 0; i < stateCodeList.size() - 1; ++i) {
+			for (int j = 0; j < stateCodeList.size() - i - 1; ++j) {
+				StateCode census1 = stateCodeList.get(j);
+				StateCode census2 = stateCodeList.get(j + 1);
+				if (stateComparator.compare(census1, census2) > 0) {
+					stateCodeList.set(j, census2);
+					stateCodeList.set(j + 1, census1);
 				}
 			}
 		}
